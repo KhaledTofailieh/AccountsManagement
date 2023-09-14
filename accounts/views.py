@@ -10,6 +10,7 @@ from accounts.models import User
 from accounts.serializers import UserAuthSerializer
 
 
+# class based view, this time contain post method.
 class SignUpView(APIView):
     def post(self, request):
         email = request.data.get('email')
@@ -17,7 +18,7 @@ class SignUpView(APIView):
         # Check if a user with the given email already exists
         if User.objects.filter(email=email).exists():
             return Response({'error': 'This email is not available.'}, status=status.HTTP_400_BAD_REQUEST)
-
+        # UserAuthentication serializer
         serializer = UserAuthSerializer(data=request.data)
 
         # validate fields with serializers.
@@ -31,6 +32,7 @@ class SignUpView(APIView):
 @api_view(['POST'])
 @permission_classes([AllowAny, ])
 @error_handler
+# functional view that responsible on authenticate user(give him token)
 def authenticate_user(request):
     try:
         email = request.data['email']
@@ -38,11 +40,11 @@ def authenticate_user(request):
         # this will raise an error if criteria doesn't meet.
         user = User.objects.get(email=email, password=password, status=User.Status.ACTIVE)
 
+        # if user is fetched correctly with requested criteria.
         if user:
             try:
                 serializer = UserAuthSerializer(user)
                 user_logged_in.send(sender=user.__class__, request=request, user=user)
-
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except Exception as e:
                 raise e

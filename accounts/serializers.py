@@ -6,6 +6,7 @@ from accounts.models import User
 import re
 
 
+# UserAuthSerializer used for authentication process.
 class UserAuthSerializer(serializers.ModelSerializer):
     TYPE_CHOICES = User.Type.choices
     STATUS_CHOICES = User.Status.choices
@@ -21,6 +22,7 @@ class UserAuthSerializer(serializers.ModelSerializer):
 
     tokens = serializers.SerializerMethodField()
 
+    # validators on input.
     def validate_email(self, value):
         # Custom email validation logic
         if not re.match(r"[^@]+@[^@]+\.[^@]+", value):
