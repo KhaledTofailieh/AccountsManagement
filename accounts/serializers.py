@@ -1,3 +1,5 @@
+import time
+
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -8,16 +10,16 @@ import re
 
 # UserAuthSerializer used for authentication process.
 class UserAuthSerializer(serializers.ModelSerializer):
-    TYPE_CHOICES = User.Type.choices
-    STATUS_CHOICES = User.Status.choices
+    TYPE_CHOICES = ('Ad', 'St', 'Cu')
+    STATUS_CHOICES = ('Ac', 'Di')
 
     class Meta:
         model = User
         fields = ['id', 'first_name', 'birth_date', 'last_name', 'email', 'type', 'status', 'tokens']
 
     email = serializers.EmailField()
-    type = serializers.ChoiceField(choices=TYPE_CHOICES, default=User.Type.CUSTOMER)
-    status = serializers.ChoiceField(choices=STATUS_CHOICES, default=User.Status.ACTIVE)
+    type = serializers.ChoiceField(choices=User.Type.choices, default='Cu')
+    status = serializers.ChoiceField(choices=STATUS_CHOICES, default='Ac')
     birth_date = serializers.DateField(default=None)
 
     tokens = serializers.SerializerMethodField()
